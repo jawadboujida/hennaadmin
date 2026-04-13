@@ -255,8 +255,8 @@
 <!-- CONFIG: plak hier je Google Sheet Webapp URL -->
 <div class="config-bar">
   <label>Google Sheet URL</label>
-  <input type="text" id="sheetUrl" placeholder="https://script.google.com/macros/s/.../exec"
-    value="https://script.google.com/macros/s/AKfycbxxFIBZoh5eeQrDYOBTeKbu5ugC2TjDwnqF9HZOLYZlpVj8tn8p6MW8A2YSoNGkasmTvg/exec"/>
+  <input type="text" id="sheetUrl" placeholder="https://script.google.com/macros/s/AKfycbzgPpLL1ymogP10_F5OkLcQzN8ZGTfEt7oWSyWe4J89JoiW_3Lx68dk7OUEOz5cYdQfUg/exec"
+    value="https://script.google.com/macros/s/AKfycbzgPpLL1ymogP10_F5OkLcQzN8ZGTfEt7oWSyWe4J89JoiW_3Lx68dk7OUEOz5cYdQfUg/exec"/>
   <button class="btn" onclick="laadData()">↻ Vernieuwen</button>
   <button class="btn btn-ghost" onclick="exporteerCSV()">↓ CSV</button>
 </div>
@@ -358,12 +358,23 @@
       </div>`;
 
     try {
-      const resp = await fetch(url + '?actie=lees');
-      const data = await resp.json();
+      // Probeer zonder actie parameter (doGet geeft dan gewoon alle data)
+      const resp = await fetch(url);
+      const tekst = await resp.text();
 
-      if (!data || !data.rijen) throw new Error('Geen data');
+      let data;
+      try {
+        data = JSON.parse(tekst);
+      } catch(parseErr) {
+        throw new Error('Antwoord is geen geldige JSON: ' + tekst.substring(0, 100));
+      }
 
-      alleRijen = data.rijen;
+      // Ondersteun zowel { rijen: [] } als direct een array
+      const rijen = data.rijen || data;
+
+      if (!Array.isArray(rijen)) throw new Error('Geen rijen gevonden in: ' + JSON.stringify(data).substring(0, 100));
+
+      alleRijen = rijen;
       toonTabel(alleRijen);
       updateStats(alleRijen);
 
@@ -371,8 +382,9 @@
       document.getElementById('tabelContainer').innerHTML = `
         <div class="state-box">
           <span class="icon">⚠️</span>
-          <p>Kon de data niet laden.<br>
-          Controleer of de URL correct is en de webapp <strong>publiek toegankelijk</strong> is.</p>
+          <p>Fout: <strong>${e.message}</strong><br><br>
+          Controleer of de Apps Script code de nieuwe versie heeft<br>
+          met <strong>doGet</strong> die data teruggeeft.</p>
         </div>`;
     }
 
@@ -477,8 +489,8 @@
 
   // Zet de URL vast als die nog niet opgeslagen was
   if (!opgeslagenUrl) {
-    urlInput.value = "https://script.google.com/macros/s/AKfycbxxFIBZoh5eeQrDYOBTeKbu5ugC2TjDwnqF9HZOLYZlpVj8tn8p6MW8A2YSoNGkasmTvg/exec";
-    localStorage.setItem('hennaSheetUrl', "https://script.google.com/macros/s/AKfycbxxFIBZoh5eeQrDYOBTeKbu5ugC2TjDwnqF9HZOLYZlpVj8tn8p6MW8A2YSoNGkasmTvg/exec");
+    urlInput.value = "https://script.google.com/macros/s/AKfycbzgPpLL1ymogP10_F5OkLcQzN8ZGTfEt7oWSyWe4J89JoiW_3Lx68dk7OUEOz5cYdQfUg/exec";
+    localStorage.setItem('hennaSheetUrl', "https://script.google.com/macros/s/AKfycbzgPpLL1ymogP10_F5OkLcQzN8ZGTfEt7oWSyWe4J89JoiW_3Lx68dk7OUEOz5cYdQfUg/exec");
     document.getElementById('setupGuide').style.display = 'none';
   }
   // Laad automatisch
