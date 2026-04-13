@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Henna Avond — RSVP Overzicht</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;1,300;1,400&family=Jost:wght@200;300;400;500&family=Amiri:wght@400&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:     #1a0f08;
+      --bg2:    #221409;
+      --bg3:    #2d1c0f;
+      --card:   #2a1810;
+      --border: rgba(184,137,58,.15);
+      --gold:   #b8893a;
+      --gold2:  #d4a855;
+      --terra:  #9b5e2a;
+      --cream:  #f2e8d9;
+      --mid:    #8a6a45;
+      --green:  #4a7c59;
+      --red:    #8b3a3a;
+      --text:   #e8d5b0;
+      --text2:  #a08060;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      padding: 2rem 2.5rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: flex-end; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+      background: linear-gradient(to bottom, #0f0804, var(--bg));
+    }
+    .header-left h1 {
+      font-family: 'Cormorant', serif;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 300; font-style: italic;
+      color: var(--gold2); line-height: 1.1;
+    }
+    .header-left p {
+      font-size: .58rem; letter-spacing: .4em; text-transform: uppercase;
+      color: var(--text2); margin-top: .3rem;
+    }
+    .header-arabic {
+      font-family: 'Amiri', serif;
+      font-size: 1.4rem; color: var(--gold);
+      opacity: .5;
+    }
+
+    /* ── CONFIG BAR ── */
+    .config-bar {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      padding: .9rem 2.5rem;
+      display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+    }
+    .config-bar label {
+      font-size: .55rem; letter-spacing: .3em; text-transform: uppercase;
+      color: var(--text2); white-space: nowrap;
+    }
+    .config-bar input {
+      flex: 1; min-width: 200px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border);
+      border-radius: 6px; padding: .5rem .8rem;
+      color: var(--text); font-family: 'Jost', sans-serif;
+      font-size: .75rem; outline: none;
+      transition: border-color .2s;
+    }
+    .config-bar input:focus { border-color: var(--gold); }
+    .config-bar input::placeholder { color: var(--text2); opacity: .5; }
+    .btn {
+      background: var(--terra); color: var(--cream);
+      border: none; border-radius: 6px;
+      padding: .5rem 1.2rem;
+      font-family: 'Jost', sans-serif; font-size: .62rem;
+      font-weight: 400; letter-spacing: .2em; text-transform: uppercase;
+      cursor: pointer; transition: opacity .2s, transform .15s;
+      white-space: nowrap;
+    }
+    .btn:hover { opacity: .85; transform: translateY(-1px); }
+    .btn-ghost {
+      background: transparent; color: var(--gold);
+      border: 1px solid var(--border);
+    }
+
+    /* ── STATS ROW ── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .stat {
+      background: var(--bg2);
+      padding: 1.4rem 1.8rem;
+      text-align: center;
+    }
+    .stat-value {
+      font-family: 'Cormorant', serif;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 300; color: var(--gold2);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: .52rem; letter-spacing: .3em; text-transform: uppercase;
+      color: var(--text2); margin-top: .4rem;
+    }
+    .stat.green .stat-value { color: #6dab84; }
+    .stat.red   .stat-value { color: #c47a7a; }
+    .stat.gold  .stat-value { color: var(--gold2); }
+
+    /* ── MAIN CONTENT ── */
+    main { padding: 2rem 2.5rem; }
+
+    /* ── TABLE ── */
+    .table-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .table-header {
+      padding: 1rem 1.5rem;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap; gap: .8rem;
+    }
+    .table-title {
+      font-size: .58rem; letter-spacing: .35em; text-transform: uppercase;
+      color: var(--text2);
+    }
+    .search-wrap { position: relative; }
+    .search-wrap input {
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      border-radius: 6px; padding: .4rem .8rem .4rem 2rem;
+      color: var(--text); font-family: 'Jost', sans-serif;
+      font-size: .72rem; outline: none; width: 180px;
+      transition: border-color .2s;
+    }
+    .search-wrap input:focus { border-color: var(--gold); }
+    .search-wrap::before {
+      content: '🔍'; position: absolute;
+      left: .5rem; top: 50%; transform: translateY(-50%);
+      font-size: .7rem; opacity: .4;
+    }
+
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { border-bottom: 1px solid var(--border); }
+    thead th {
+      padding: .8rem 1.2rem;
+      font-size: .5rem; letter-spacing: .35em; text-transform: uppercase;
+      color: var(--text2); font-weight: 400; text-align: left;
+    }
+    tbody tr {
+      border-bottom: 1px solid rgba(184,137,58,.07);
+      transition: background .15s;
+    }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(184,137,58,.04); }
+    tbody td {
+      padding: .9rem 1.2rem;
+      font-size: .8rem; color: var(--text);
+    }
+    .td-naam {
+      font-family: 'Cormorant', serif;
+      font-size: 1.05rem; font-style: italic;
+      color: var(--cream);
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: .3rem;
+      padding: .25rem .7rem; border-radius: 20px;
+      font-size: .58rem; letter-spacing: .15em; font-weight: 400;
+    }
+    .badge-ja    { background: rgba(74,124,89,.2);  color: #7dbb94; border: 1px solid rgba(74,124,89,.3); }
+    .badge-nee   { background: rgba(139,58,58,.2);  color: #c47a7a; border: 1px solid rgba(139,58,58,.3); }
+    .badge-henna { background: rgba(184,137,58,.15); color: var(--gold2); border: 1px solid rgba(184,137,58,.25); }
+    .td-datum { font-size: .65rem; color: var(--text2); }
+
+    /* ── EMPTY / LOADING STATE ── */
+    .state-box {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--text2);
+    }
+    .state-box .icon { font-size: 2.5rem; margin-bottom: 1rem; opacity: .4; display: block; }
+    .state-box p { font-size: .75rem; letter-spacing: .1em; line-height: 1.8; }
+    .state-box strong { color: var(--gold); font-weight: 400; }
+
+    /* ── SETUP GUIDE ── */
+    .setup-guide {
+      background: rgba(184,137,58,.06);
+      border: 1px solid rgba(184,137,58,.2);
+      border-radius: 12px;
+      padding: 1.5rem 1.8rem;
+      margin-bottom: 1.5rem;
+    }
+    .setup-guide h3 {
+      font-size: .6rem; letter-spacing: .35em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 1rem;
+    }
+    .setup-steps { display: flex; flex-direction: column; gap: .7rem; }
+    .setup-step {
+      display: flex; gap: 1rem; align-items: flex-start;
+    }
+    .step-num {
+      width: 22px; height: 22px; border-radius: 50%;
+      background: rgba(184,137,58,.2); color: var(--gold);
+      font-size: .65rem; display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: .1rem;
+    }
+    .step-text { font-size: .72rem; color: var(--text2); line-height: 1.7; }
+    .step-text strong { color: var(--text); font-weight: 400; }
+    .step-text code {
+      background: rgba(255,255,255,.07); color: var(--gold2);
+      padding: .1rem .4rem; border-radius: 4px; font-size: .68rem;
+    }
+
+    /* ── REFRESH indicator ── */
+    .refresh-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--green); display: inline-block;
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      header, .config-bar, main { padding-left: 1.2rem; padding-right: 1.2rem; }
+      thead th:nth-child(4), tbody td:nth-child(4) { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1>Henna Avond — RSVP</h1>
+    <p>Shaïna · 10 juni 2026 · Mechelen</p>
+  </div>
+  <span class="header-arabic">ليلة الحناء</span>
+</header>
+
+<!-- CONFIG: plak hier je Google Sheet Webapp URL -->
+<div class="config-bar">
+  <label>Google Sheet URL</label>
+  <input type="text" id="sheetUrl" placeholder="https://script.google.com/macros/s/.../exec"
+    value="https://script.google.com/macros/s/AKfycbydPuj6xbkKyZmyQ0Dj5bupqzZnPxUnY_F11e1A_Ck-JEQPg7CA6kdAyGNyYwxj-1f3OQ/exec"/>
+  <button class="btn" onclick="laadData()">↻ Vernieuwen</button>
+  <button class="btn btn-ghost" onclick="exporteerCSV()">↓ CSV</button>
+</div>
+
+<!-- STATISTIEKEN -->
+<div class="stats" id="statsRij">
+  <div class="stat">
+    <div class="stat-value" id="statTotaal">—</div>
+    <div class="stat-label">Totaal ingeschreven</div>
+  </div>
+  <div class="stat green">
+    <div class="stat-value" id="statJa">—</div>
+    <div class="stat-label">Aanwezig</div>
+  </div>
+  <div class="stat red">
+    <div class="stat-value" id="statNee">—</div>
+    <div class="stat-label">Afwezig</div>
+  </div>
+  <div class="stat gold">
+    <div class="stat-value" id="statHenna">—</div>
+    <div class="stat-label">Wil henna</div>
+  </div>
+</div>
+
+<main>
+
+  <!-- SETUP GUIDE (verborgen als URL ingevuld) -->
+  <div class="setup-guide" id="setupGuide">
+    <h3>⚙️ Eenmalige setup — 5 minuten</h3>
+    <div class="setup-steps">
+      <div class="setup-step">
+        <div class="step-num">1</div>
+        <div class="step-text">Ga naar <strong>sheets.google.com</strong> en maak een nieuw spreadsheet. Geef de eerste rij headers: <code>Naam</code> <code>Aanwezig</code> <code>Henna</code> <code>Datum</code></div>
+      </div>
+      <div class="setup-step">
+        <div class="step-num">2</div>
+        <div class="step-text">Klik in het spreadsheet op <strong>Extensies → Apps Script</strong>. Verwijder alle code en plak de script code die je van Jawad hebt gekregen. Sla op.</div>
+      </div>
+      <div class="setup-step">
+        <div class="step-num">3</div>
+        <div class="step-text">Klik op <strong>Implementeren → Nieuwe implementatie</strong>. Type: <strong>Webapp</strong>. Toegang: <strong>Iedereen</strong>. Kopieer de URL.</div>
+      </div>
+      <div class="setup-step">
+        <div class="step-num">4</div>
+        <div class="step-text">Plak de URL hierboven in het veld <strong>Google Sheet URL</strong> en klik op <strong>Vernieuwen</strong>.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABEL -->
+  <div class="table-wrap">
+    <div class="table-header">
+      <span class="table-title">
+        <span class="refresh-dot" id="refreshDot" style="display:none"></span>
+        Aanmeldingen
+      </span>
+      <div class="search-wrap">
+        <input type="text" id="zoekInput" placeholder="Zoek op naam…" oninput="filterTabel()"/>
+      </div>
+    </div>
+
+    <div id="tabelContainer">
+      <div class="state-box">
+        <span class="icon">🌿</span>
+        <p>Vul de <strong>Google Sheet URL</strong> in hierboven<br>en klik op <strong>Vernieuwen</strong> om de aanmeldingen te zien.</p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+  let alleRijen = [];
+
+  // ── Sla URL op in localStorage ──
+  const urlInput = document.getElementById('sheetUrl');
+  const opgeslagenUrl = localStorage.getItem('hennaSheetUrl');
+  if (opgeslagenUrl) {
+    urlInput.value = opgeslagenUrl;
+    document.getElementById('setupGuide').style.display = 'none';
+  }
+  urlInput.addEventListener('change', () => {
+    localStorage.setItem('hennaSheetUrl', urlInput.value);
+    document.getElementById('setupGuide').style.display = urlInput.value ? 'none' : 'block';
+  });
+
+  // ── Laad data van Google Sheet ──
+  async function laadData() {
+    const url = urlInput.value.trim();
+    if (!url) { alert('Vul eerst de Google Sheet URL in.'); return; }
+
+    localStorage.setItem('hennaSheetUrl', url);
+    document.getElementById('setupGuide').style.display = 'none';
+    document.getElementById('refreshDot').style.display = 'inline-block';
+    document.getElementById('tabelContainer').innerHTML = `
+      <div class="state-box">
+        <span class="icon">⏳</span>
+        <p>Laden…</p>
+      </div>`;
+
+    try {
+      const resp = await fetch(url + '?actie=lees');
+      const data = await resp.json();
+
+      if (!data || !data.rijen) throw new Error('Geen data');
+
+      alleRijen = data.rijen;
+      toonTabel(alleRijen);
+      updateStats(alleRijen);
+
+    } catch(e) {
+      document.getElementById('tabelContainer').innerHTML = `
+        <div class="state-box">
+          <span class="icon">⚠️</span>
+          <p>Kon de data niet laden.<br>
+          Controleer of de URL correct is en de webapp <strong>publiek toegankelijk</strong> is.</p>
+        </div>`;
+    }
+
+    document.getElementById('refreshDot').style.display = 'none';
+  }
+
+  // ── Toon tabel ──
+  function toonTabel(rijen) {
+    if (!rijen || rijen.length === 0) {
+      document.getElementById('tabelContainer').innerHTML = `
+        <div class="state-box">
+          <span class="icon">🌙</span>
+          <p>Nog geen aanmeldingen.</p>
+        </div>`;
+      return;
+    }
+
+    const html = `
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Naam</th>
+            <th>Aanwezig</th>
+            <th>Henna</th>
+            <th>Datum</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rijen.map((r, i) => `
+            <tr>
+              <td style="color:var(--text2);font-size:.7rem">${i + 1}</td>
+              <td class="td-naam">${escHtml(r[0] || '—')}</td>
+              <td>${badgeAanwezig(r[1])}</td>
+              <td>${badgeHenna(r[2])}</td>
+              <td class="td-datum">${escHtml(r[3] || '—')}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>`;
+
+    document.getElementById('tabelContainer').innerHTML = html;
+  }
+
+  // ── Stats ──
+  function updateStats(rijen) {
+    const totaal = rijen.length;
+    const ja     = rijen.filter(r => (r[1] || '').toLowerCase() === 'ja').length;
+    const nee    = rijen.filter(r => (r[1] || '').toLowerCase() === 'nee').length;
+    const henna  = rijen.filter(r => (r[2] || '').toLowerCase() === 'ja').length;
+
+    document.getElementById('statTotaal').textContent = totaal;
+    document.getElementById('statJa').textContent     = ja;
+    document.getElementById('statNee').textContent    = nee;
+    document.getElementById('statHenna').textContent  = henna;
+  }
+
+  // ── Zoek/filter ──
+  function filterTabel() {
+    const zoek = document.getElementById('zoekInput').value.toLowerCase();
+    const gefilterd = alleRijen.filter(r =>
+      (r[0] || '').toLowerCase().includes(zoek)
+    );
+    toonTabel(gefilterd);
+  }
+
+  // ── CSV export ──
+  function exporteerCSV() {
+    if (!alleRijen.length) { alert('Geen data om te exporteren.'); return; }
+    const header = 'Naam,Aanwezig,Henna,Datum\n';
+    const body   = alleRijen.map(r =>
+      r.map(cel => `"${(cel||'').replace(/"/g,'""')}"`).join(',')
+    ).join('\n');
+    const blob = new Blob([header + body], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'henna-rsvp.csv';
+    a.click();
+  }
+
+  // ── Helpers ──
+  function badgeAanwezig(val) {
+    const v = (val || '').toLowerCase();
+    if (v === 'ja')  return '<span class="badge badge-ja">✓ Ja</span>';
+    if (v === 'nee') return '<span class="badge badge-nee">✕ Nee</span>';
+    return '<span style="color:var(--text2);font-size:.7rem">—</span>';
+  }
+  function badgeHenna(val) {
+    const v = (val || '').toLowerCase();
+    if (v === 'ja')  return '<span class="badge badge-henna">🌿 Ja</span>';
+    if (v === 'nee') return '<span style="color:var(--text2);font-size:.7rem">Nee</span>';
+    return '<span style="color:var(--text2);font-size:.7rem">—</span>';
+  }
+  function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // Auto-refresh elke 60 seconden als URL ingevuld
+  setInterval(() => {
+    if (urlInput.value.trim()) laadData();
+  }, 60000);
+
+  // Zet de URL vast als die nog niet opgeslagen was
+  if (!opgeslagenUrl) {
+    urlInput.value = "https://script.google.com/macros/s/AKfycbydPuj6xbkKyZmyQ0Dj5bupqzZnPxUnY_F11e1A_Ck-JEQPg7CA6kdAyGNyYwxj-1f3OQ/exec";
+    localStorage.setItem('hennaSheetUrl', "https://script.google.com/macros/s/AKfycbydPuj6xbkKyZmyQ0Dj5bupqzZnPxUnY_F11e1A_Ck-JEQPg7CA6kdAyGNyYwxj-1f3OQ/exec");
+    document.getElementById('setupGuide').style.display = 'none';
+  }
+  // Laad automatisch
+  laadData();
+</script>
+
+</body>
+</html>
