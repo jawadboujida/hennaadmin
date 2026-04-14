@@ -374,7 +374,15 @@
 
       if (!Array.isArray(rijen)) throw new Error('Geen rijen gevonden in: ' + JSON.stringify(data).substring(0, 100));
 
-      alleRijen = rijen;
+      // Verwijder duplicaten — bewaar de LAATSTE inzending per naam
+      const uniek = {};
+      rijen.forEach(r => {
+        const naam = (r[0] || '').trim().toLowerCase();
+        if (naam) uniek[naam] = r; // overschrijft vorige → laatste wint
+      });
+      const gefilterd = Object.values(uniek);
+
+      alleRijen = gefilterd;
       toonTabel(alleRijen);
       updateStats(alleRijen);
 
